@@ -1,0 +1,15 @@
+# /etc/systemd/system/minecraft.service
+
+[Unit]
+Description=Minecraft PaperMC Server
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/paper
+ExecStart=/usr/bin/java -Xmx2G -Xms2G -jar paper-1.20.1-70.jar --nogui --noconsole
+Restart=always
+User=karsten
+Group=karsten
+
+[Install]
+WantedBy=multi-user.target
