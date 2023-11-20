@@ -203,6 +203,19 @@ def circle(radius, height=1, block_id=block.STONE_BRICK):
             mc.setBlock(int(x), start_y+h, int(z), block_id)
 
 
+def cupula(radius, block_id=block.GLASS_PANE):
+    start_x, start_y, start_z, _, _ = position()
+
+    for y in range(radius):
+        # Berechnen des horizontalen Radius für die aktuelle Höhe
+        h = math.sqrt(radius ** 2 - y ** 2)
+        for winkel in range(360):
+            radian = math.radians(winkel)
+            x = start_x + int(h * math.cos(radian))
+            z = start_z + int(h * math.sin(radian))
+            mc.setBlock(x, start_y + y, z, block_id)
+
+
 def digdown(depth=10):
     start_x, start_y, start_z, _, _ = position()
     for d in range(depth):
