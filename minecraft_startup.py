@@ -1,10 +1,3 @@
-
-"""
-Start with
-  $ PYTHONSTARTUP=~/minecraft_startup.py python3
-to get a Python REPL where you can interactively use some of the functions below.
-"""
-
 import math
 
 from mcpi.minecraft import Minecraft
@@ -15,12 +8,15 @@ DEBUG = True
 mc = Minecraft.create()
 player_ids = mc.getPlayerEntityIds()
 
+PLAYER_ID = player_ids[0]
+
 print("Minecraft connected as `mc`")
 print("Block module imported as `block`")
 print(f"Players online: {player_ids}")
 
-PLAYER_ID = 1181
-
+home_location = (386,0,-83)
+linus_location = (356, 49, 22)
+village_location = (5431, 28, -4685)
 x,y,z = 0,0,0
 
 
@@ -44,7 +40,7 @@ def position(player_id=PLAYER_ID):
 
 def is_bodenschatz(block_id):
     # Liste der IDs für Bodenschätze
-    bodenschaetze = [block.COAL_ORE.id, block.IRON_ORE.id, block.GOLD_ORE.id,
+    bodenschaetze = [block.COAL_ORE.id, block.IRON_ORE.id, block.GOLD_ORE.id, 
                      block.DIAMOND_ORE.id, block.EMERALD_ORE.id, block.REDSTONE_ORE.id]
     return block_id in bodenschaetze
 
@@ -68,13 +64,38 @@ def floor(width=20, material=block.STONE):
 
 
 def tower(width, height, material=block.STONE_BRICK):
-    """ Baut einen Turm mit Decke an der Position """
+    """ Baut einen Turm mit Decke an der aktuellen Position """
     x,y,z,_,_ = position()
     for k in range(height):
         for i in range(width):
             for j in range(width):
                 if i == 0 or i == width - 1 or j == 0 or j == width - 1 or k == height-1:
                     mc.setBlock(x+i, y+k, z+j, material)
+
+
+def tunnel(length=10, light=True, rail=False):
+    """ Gräbt einen Tunnel in Blickrichtung """
+    x,y,z,pitch,yaw = position()
+
+    # Richtung der Treppe bestimmen basierend auf Yaw-Wert
+    dx = int(round(-math.sin(math.radians(yaw))))
+    dz = int(round(math.cos(math.radians(yaw))))
+
+    for i in range(length):
+        x += dx
+        z += dz
+        if rail:
+            mc.setBlock(x, y, z, block.RAIL)
+        else:
+            mc.setBlock(x, y, z, block.AIR)
+        mc.setBlock(x, y+1, z, block.AIR)
+
+        if i % 10 == 0:
+            # Alle 10 Blöcke links eine Fackel setzen
+            yaw_radians = math.radians(yaw)
+            left_x = x - math.sin(yaw_radians + math.pi / 2)
+            left_z = z + math.cos(yaw_radians + math.pi / 2)
+            mc.setBlock(int(left_x), y+1, int(left_z), block.TORCH)
 
 
 def find_blocks(radius, funktion):
@@ -100,7 +121,7 @@ def block_handler(x, y, z, block_id):
     print(f"Block gefunden bei ({x}, {y}, {z}) mit ID {block_id}")
 
 
-def stairs(length=10):
+def stairs(height=10):
     """ Baut eine gerade Treppe auf einen Berg. """
     x,y,z,pitch,yaw = position()
 
@@ -118,22 +139,16 @@ def stairs(length=10):
     elif dz == -1:
         data = 3  # Treppe nach Norden
 
-    for i in range(length):
+    for i in range(height):
         # Position der nächsten Stufe
         x += dx
         z += dz
-        # Höhe der nächsten Stufe anpassen
-        while mc.getBlock(x, y - 1, z) == block.AIR.id:
-            y -= 1
-        while mc.getBlock(x, y - 1, z) != block.AIR.id:
-            y += 1
-
         # Stufe setzen
-        mc.setBlock(x, y - 1, z, block.STONE_BRICK.id, data)
+        mc.setBlock(x, y + i, z, block.STAIRS_BRICK.id, data)
 
 
-def upstairs(hoehe=5):
-    """ Gräbt ein Treppenhaus nach oben. """
+def staircase(hoehe=5, dir=1):
+    """ Gräbt ein Treppenhaus nach oben (dir=1) oder unten (dir=-1). """
     x,y,z,_,_ = position()
     xx, yy, zz, = x, y, z
 
@@ -152,7 +167,7 @@ def upstairs(hoehe=5):
         mc.setBlock(xx, yy+1, zz, block.AIR)
         xx += dx
         zz += dz
-        yy += 1
+        yy += dir
         schritte += 1
 
         # Nach fünf Schritten Richtung ändern
@@ -186,3 +201,11 @@ def circle(radius, height=1, block_id=block.STONE_BRICK):
             x = start_x + radius * math.cos(radian)
             z = start_z + radius * math.sin(radian)
             mc.setBlock(int(x), start_y+h, int(z), block_id)
+
+
+def digdown(depth=10):
+    start_x, start_y, start_z, _, _ = position()
+    for d in range(depth):
+        mc.setBlock(start_x + 1, start_y - d, start_z, block.AIR)
+
+
