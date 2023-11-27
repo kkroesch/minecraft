@@ -203,7 +203,7 @@ def circle(radius, height=1, block_id=block.STONE_BRICK):
             mc.setBlock(int(x), start_y+h, int(z), block_id)
 
 
-def cupula(radius, block_id=block.GLASS_PANE):
+def cupula(radius, block_id=block.GLASS):
     start_x, start_y, start_z, _, _ = position()
 
     for y in range(radius):
