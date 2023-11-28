@@ -1,11 +1,8 @@
 import random
-from mcpi import block
 
-from minecraft_startup import mc, position
+import mcpi.block as block
+from minecraft import mc, position, PLAYER_ID
 
-
-player_ids = mc.getPlayerEntityIds()
-PLAYER_ID = player_ids[0]
 
 # Dimensionen des Labyrinths
 breite = 32
