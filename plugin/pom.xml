@@ -1,0 +1,24 @@
+<project>
+    <!-- Grundlegende Projektdefinitionen -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>kroesch.net.minecraft</groupId>
+    <artifactId>Bergbau</artifactId>
+    <version>0.1</version>
+
+    <repositories>
+        <!-- PaperMC Repository -->
+        <repository>
+            <id>papermc-repo</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/io.papermc.paper/paper-mojangapi -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-mojangapi</artifactId>
+            <version>1.19</version>
+        </dependency>
+    </dependencies>
+</project>

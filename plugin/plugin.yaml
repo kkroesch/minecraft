@@ -1,0 +1,5 @@
+name: Bergbau
+version: 0.1
+main: net.kroesch.minecraft.Bergbau
+api-version: 1.20
+
